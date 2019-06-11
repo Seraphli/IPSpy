@@ -25,11 +25,12 @@ class Iface(object):
     def version(self):
         pass
 
-    def upload_detail(self, country, ip):
+    def upload_detail(self, ip, country, hostname):
         """
         Parameters:
-         - country
          - ip
+         - country
+         - hostname
 
         """
         pass
@@ -92,21 +93,23 @@ class Client(Iface):
             return result.success
         raise TApplicationException(TApplicationException.MISSING_RESULT, "version failed: unknown result")
 
-    def upload_detail(self, country, ip):
+    def upload_detail(self, ip, country, hostname):
         """
         Parameters:
-         - country
          - ip
+         - country
+         - hostname
 
         """
-        self.send_upload_detail(country, ip)
+        self.send_upload_detail(ip, country, hostname)
         self.recv_upload_detail()
 
-    def send_upload_detail(self, country, ip):
+    def send_upload_detail(self, ip, country, hostname):
         self._oprot.writeMessageBegin('upload_detail', TMessageType.CALL, self._seqid)
         args = upload_detail_args()
-        args.country = country
         args.ip = ip
+        args.country = country
+        args.hostname = hostname
         args.write(self._oprot)
         self._oprot.writeMessageEnd()
         self._oprot.trans.flush()
@@ -200,7 +203,7 @@ class Processor(Iface, TProcessor):
         iprot.readMessageEnd()
         result = upload_detail_result()
         try:
-            self._handler.upload_detail(args.country, args.ip)
+            self._handler.upload_detail(args.ip, args.country, args.hostname)
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
@@ -413,15 +416,17 @@ version_result.thrift_spec = (
 class upload_detail_args(object):
     """
     Attributes:
-     - country
      - ip
+     - country
+     - hostname
 
     """
 
 
-    def __init__(self, country=None, ip=None,):
-        self.country = country
+    def __init__(self, ip=None, country=None, hostname=None,):
         self.ip = ip
+        self.country = country
+        self.hostname = hostname
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -434,12 +439,17 @@ class upload_detail_args(object):
                 break
             if fid == 1:
                 if ftype == TType.STRING:
-                    self.country = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                    self.ip = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
                 if ftype == TType.STRING:
-                    self.ip = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                    self.country = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 3:
+                if ftype == TType.STRING:
+                    self.hostname = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
                 else:
                     iprot.skip(ftype)
             else:
@@ -452,13 +462,17 @@ class upload_detail_args(object):
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('upload_detail_args')
+        if self.ip is not None:
+            oprot.writeFieldBegin('ip', TType.STRING, 1)
+            oprot.writeString(self.ip.encode('utf-8') if sys.version_info[0] == 2 else self.ip)
+            oprot.writeFieldEnd()
         if self.country is not None:
-            oprot.writeFieldBegin('country', TType.STRING, 1)
+            oprot.writeFieldBegin('country', TType.STRING, 2)
             oprot.writeString(self.country.encode('utf-8') if sys.version_info[0] == 2 else self.country)
             oprot.writeFieldEnd()
-        if self.ip is not None:
-            oprot.writeFieldBegin('ip', TType.STRING, 2)
-            oprot.writeString(self.ip.encode('utf-8') if sys.version_info[0] == 2 else self.ip)
+        if self.hostname is not None:
+            oprot.writeFieldBegin('hostname', TType.STRING, 3)
+            oprot.writeString(self.hostname.encode('utf-8') if sys.version_info[0] == 2 else self.hostname)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -479,8 +493,9 @@ class upload_detail_args(object):
 all_structs.append(upload_detail_args)
 upload_detail_args.thrift_spec = (
     None,  # 0
-    (1, TType.STRING, 'country', 'UTF8', None, ),  # 1
-    (2, TType.STRING, 'ip', 'UTF8', None, ),  # 2
+    (1, TType.STRING, 'ip', 'UTF8', None, ),  # 1
+    (2, TType.STRING, 'country', 'UTF8', None, ),  # 2
+    (3, TType.STRING, 'hostname', 'UTF8', None, ),  # 3
 )
 
 

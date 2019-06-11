@@ -16,7 +16,9 @@ Upload client's public IP to server.
 
 You can execute this with `crontab`, for example:
 
-`5 */1 * * * /env/bin/python -m ipspy.client`
+`15 * * * * /env/bin/python -m ipspy.client`
+
+This task will update the ip every 15 minutes.
 
 ## Other
 

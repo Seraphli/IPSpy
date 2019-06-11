@@ -30,8 +30,8 @@ class Client(object):
             raise Exception('Version mismatch! Update project.')
 
     def upload_detail(self):
-        country, ip = get_ip_detail()
-        self._client.upload_detail(country, ip)
+        ip, country, hostname = get_ip_detail()
+        self._client.upload_detail(ip, country, hostname)
 
 
 def parse_args():

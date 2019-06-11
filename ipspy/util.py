@@ -1,4 +1,5 @@
 import requests
+import socket
 import json
 
 
@@ -7,9 +8,10 @@ def get_ip_detail():
     url = r'http://www.trackip.net/ip?json'
     r = requests.get(url)
     detail = json.loads(r.text)
-    country = detail['Country']
     ip = detail['IP']
-    return country, ip
+    country = detail['Country']
+    hostname = socket.gethostname()
+    return ip, country, hostname
 
 
 if __name__ == '__main__':
