@@ -12,13 +12,14 @@ from ipspy import __version__
 
 
 class Handler(object):
-    def save(self, ip, country, hostname):
+    def save(self, mac_addr, ip, country, hostname):
         ip_dict = {}
         try:
             ip_dict = json.load(open('ip.json'))
         except:
             pass
-        ip_dict.update({ip: {'country': country, 'hostname': hostname}})
+        ip_dict.update({mac_addr: {
+            'ip': ip, 'country': country, 'hostname': hostname}})
         json.dump(ip_dict, open('ip.json', 'w'))
 
     def ping(self):
@@ -27,8 +28,8 @@ class Handler(object):
     def version(self):
         return __version__
 
-    def upload_detail(self, ip, country, hostname):
-        self.save(ip, country, hostname)
+    def upload_detail(self, mac_addr, ip, country, hostname):
+        self.save(mac_addr, ip, country, hostname)
 
 
 class ServerProc(mp.Process):

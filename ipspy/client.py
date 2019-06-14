@@ -7,7 +7,7 @@ from thrift.transport import TSocket
 from ipspy import __version__
 import ipspy.rpc.ipspyrpc.ipspyrpc as server
 import ipspy.rpc.constants as constants
-from ipspy.util import get_ip_detail
+from ipspy.util import get_ip_detail, get_mac_addr
 
 
 class Client(object):
@@ -31,7 +31,8 @@ class Client(object):
 
     def upload_detail(self):
         ip, country, hostname = get_ip_detail()
-        self._client.upload_detail(ip, country, hostname)
+        mac_addr = get_mac_addr()
+        self._client.upload_detail(mac_addr, ip, country, hostname)
 
 
 def parse_args():
