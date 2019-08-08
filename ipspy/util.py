@@ -1,12 +1,16 @@
 def get_ip_detail():
     import requests
-    import json
+    from bs4 import BeautifulSoup
     import socket
     """Get public IP and country"""
-    url = r'http://www.trackip.net/ip?json'
+    url = r'https://www.whatismyip.org/my-ip-address'
     r = requests.get(url)
-    detail = json.loads(r.text)
-    ip = detail['IP']
+    parsed_html = BeautifulSoup(r.text, 'html.parser')
+    table = parsed_html.find_all('table')[0]
+    label = [i.text for i in table.find_all('strong')]
+    content = [i.text for i in table.find_all('span')]
+    detail = dict(zip(label, content))
+    ip = detail['Your IP']
     country = detail['Country']
     hostname = socket.gethostname()
     return ip, country, hostname
