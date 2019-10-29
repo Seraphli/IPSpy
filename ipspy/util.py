@@ -4,7 +4,9 @@ def get_ip_detail():
     import socket
     """Get public IP and country"""
     url = r'https://www.whatismyip.org/my-ip-address'
-    r = requests.get(url)
+    session = requests.Session()
+    session.trust_env = False
+    r = session.get(url)
     parsed_html = BeautifulSoup(r.text, 'html.parser')
     table = parsed_html.find_all('table')[0]
     label = [i.text for i in table.find_all('strong')]
