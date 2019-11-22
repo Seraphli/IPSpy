@@ -1,3 +1,4 @@
+from datetime import datetime
 import multiprocessing as mp
 import json
 
@@ -29,6 +30,9 @@ class Handler(object):
         return __version__
 
     def upload_detail(self, mac_addr, ip, country, hostname):
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y %H:%M:%S")
+        print("[{}] Message from {}.".format(date_time, ip))
         self.save(mac_addr, ip, country, hostname)
 
 
